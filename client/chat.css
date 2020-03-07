@@ -1,3 +1,13 @@
+/* colors */
+.bg-p {
+    background-color: gray;
+    color: black;
+}
+
+.bg-s{
+    background-color: lightgrey;
+}
+
 body, html {
     height: 100%;
 }
@@ -8,6 +18,12 @@ body, html {
 
 .list-group-item {
     width: 100%;
+    word-wrap: normal;
+    word-break: break-all;
+}
+
+.h-100 {
+    max-height: 99.9vh;
 }
 
 .h-90 {
@@ -22,6 +38,19 @@ body, html {
     max-height: 10%;
 }
 
+/* users formatting */
+#users-label{
+    font-weight: bold;
+}
+
+.user {
+    font-size: large;
+    margin: 0;
+}
+
+#users > .list-group-item {
+    margin-bottom: 3px;
+}
 
 /* message formatting */
 .username {
