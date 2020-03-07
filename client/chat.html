@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Chat</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="chat.css">
+  </head>
+
+  <body class="container border rounded h-100">
+    <div class="row h-100">
+      
+      <div class="col-10 border-right">
+        <div class="row h-90">
+          <ul class="list-group list-group-flush mh-100 w-100" id="messages">
+            <li class="list-group-item">
+              <label class="username">VirtualWaffles</label>
+              <label class="timestamp">06/03/2020 7:11 PM</label>
+              <p class="message" >message</p>
+            </li>
+            <li class="list-group-item">
+              <label class="username">VirtualWaffles</label>
+              <label class="timestamp" >06/03/2020 7:11 PM</label>
+              <p class="message" >message</p>
+            </li>
+
+
+          </ul>
+        </div>
+
+        <div class="row h-10">
+          <form action="" style="width: 100%;">
+            <input class="h-50 pl-2" id="m" autocomplete="off" placeholder="Type your message" style="width: 100%;">
+          </form>
+        </div>
+      </div>
+
+      <div class="col-2 overflow-scroll">
+        <ul id="users">
+          <li>User</li>
+        </ul>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>    
+    <script src="chat.js"></script>
+  </body>
+</html>
