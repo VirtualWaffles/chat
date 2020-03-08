@@ -18,7 +18,8 @@ let http = require('http').createServer(app);
 let io = require('socket.io')(http);
 let moment = require('moment');
 
-let users = [];
+// let users = [];
+let users = {};
 let messages = [];
 
 http.listen(PORT_NUMBER, function(){
@@ -41,7 +42,8 @@ io.on('connection', function(socket){
   //handle user disconnecting
   socket.on('disconnect', function(){
     console.log('User "' + socket.user + '" disconnected'); 
-    users = users.filter(u => u !== socket.user);
+    // users = users.filter(u => u !== socket.user);
+    delete users[socket.user];
     io.emit('user-left', socket.user);
   });
 
@@ -56,12 +58,16 @@ io.on('connection', function(socket){
   //share changed nicknames across connected clients
   socket.on('nickname', function(names){
     console.log(names['old'] + ' wants to be ' + names['new']);
-    if(users.includes(names['new']))
-      io.to(socket.id).emit('name-taken');
+    // if(users.includes(names['new']))
+    if(names['new'] in users)
+      io.to(socket.id).emit('name-taken', names['new']);
     else{
       socket.user = names['new'];
-      users = users.filter(u => u !== names['old']);
-      users.push(names['new']);
+      // users = users.filter(u => u !== names['old']);
+      // users.push(names['new']);
+      users[names['new']] = users[names['old']];
+      delete users[names['old']];
+
       io.emit('name-change', names);
     }
   });
@@ -71,7 +77,7 @@ io.on('connection', function(socket){
     if(!is_valid_color(user['color']))
       io.to(socket.id).emit('bad-color');
     else{
-
+      users[user['name']] = user['color'];
       io.emit('color-change', user);    
     }
   });
@@ -85,7 +91,8 @@ io.on('connection', function(socket){
     let color = get_color(cookies);
     
     socket.user = user;
-    users.push(user);
+    // users.push(user);
+    users[user] = color;
   
     let data = {
       name: user,
@@ -95,21 +102,23 @@ io.on('connection', function(socket){
     }
   
     io.to(socket.id).emit('welcome', data);
-    socket.broadcast.emit('user-join', user);
+    socket.broadcast.emit('user-join', {name: user, color: color});
   }
 
   //get a username from the cookies or generate a new one
   function get_username(cookies){
     let name;
-    let i = cookies.search('username=');
-    if(i > 0){
-      name = cookies.slice(i+9);
-      i = name.search(';');
-      if(i > 0)
-        name = name.substring(0, i);
+    if(cookies){
+      let i = cookies.search('username=');
+      if(i > 0){
+        name = cookies.slice(i+9);
+        i = name.search(';');
+        if(i > 0)
+          name = name.substring(0, i);
+      }
     }
-    
-    if(!name || (users.findIndex(x => x === name) > -1))
+    // if(!name || (users.findIndex(x => x === name) > -1))
+    if(!name || name in users)
       name = new_username();
 
     return name;
@@ -119,22 +128,25 @@ io.on('connection', function(socket){
     let name;
     do{
       name = 'user' + Math.floor(Math.random() * 1001);
-    }while(users.includes[name]);
+    // }while(users.includes[name]);
+    }while(name in users);
     return name;
   }
 
   //get a color from the cookies or return the default
   function get_color(cookies){
     let color;
-    let i = cookies.search('color=');
-    if(i > 0){
-      color = cookies.slice(i+6);
-      i = color.search(';');
-      if(i > 0)
-        color = color.substring(0, i);
+    if(cookies){
+      let i = cookies.search('color=');
+      if(i > 0){
+        color = cookies.slice(i+6);
+        i = color.search(';');
+        if(i > 0)
+          color = color.substring(0, i);
+      }
     }
     if(!color || !is_valid_color(color))
-      color = '000000';
+      color = 'ffffff';
     
     return color;
   }

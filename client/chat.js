@@ -64,17 +64,17 @@ $(document).ready(function(){
       document.cookie = 'color=' + color + '; max-age=' + 60*60*24 + ';';
       
       //load in users and message backlog
-      for(const user of data['users'])
-        add_user(user);
+      for(const user in data['users']){
+        add_user(user, data['users'][user]);
+      }
       for(const message of data['messages'])
         add_message(message);
     });
 
 
-    //add users to the lsit when they join
+    //add users to the list when they join
     socket.on('user-join', function(user){
-      console.log('user "' + user + '" joined');
-      add_user(user);
+      add_user(user['name'], user['color']);
     });
 
 
@@ -114,7 +114,7 @@ $(document).ready(function(){
         color = data['color'];
         document.cookie = 'color=' + color + '; max-age=' + 60*60*24 + ';';
       }
-      
+
       console.log('Setting color of "' + data['name'] + ' to ' + data['color']);
       for(const user of $('.user')){
         if($(user).text() === data['name']){
@@ -135,9 +135,10 @@ $(document).ready(function(){
       err('color');
     });
 
-    function add_user(name){
+    function add_user(name, color){
       let li = $('<li class="list-group-item user-item text-center"></li>');
       let usr = $('<label class="user">' + name + '</label>');
+      usr.css('color', ('#' + color));
       if(name === username)
         usr.css({'font-weight':'bold', 'font-style':'italic'});
       li.append(usr);
