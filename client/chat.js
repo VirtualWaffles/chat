@@ -1,10 +1,17 @@
+/*
+Author: Jesse Shewfelt
+UUID:   30066463
+LAB:    3
+
+Updated:  07/03/20
+*/
 "use strict";
 
 $(document).ready(function(){
     console.log("Script loaded");
     let socket = io(); //Initialize client
     let username;
-    let color = '000000';
+    let color;
 
     //on form submitted or button clicked event handler
     $('form').submit(function(e){
@@ -38,13 +45,11 @@ $(document).ready(function(){
     });
     
 
-
     //'chat message' event listener.
     socket.on('message', function(msg){
       console.log('message received')
       add_message(msg);
     });
-
     
     //when a client joins update their log of users and messages and
     //give them a username
@@ -56,6 +61,7 @@ $(document).ready(function(){
       
       //update cookie with user info
       document.cookie = 'username=' + username + '; max-age=' + 60*60*24 + ';';
+      document.cookie = 'color=' + color + '; max-age=' + 60*60*24 + ';';
       
       //load in users and message backlog
       for(const user of data['users'])
@@ -104,9 +110,11 @@ $(document).ready(function(){
 
     //edit the online users list when a color is changed
     socket.on('color-change', function(data){
-      if(data['name'] === username)
+      if(data['name'] === username){
         color = data['color'];
-
+        document.cookie = 'color=' + color + '; max-age=' + 60*60*24 + ';';
+      }
+      
       console.log('Setting color of "' + data['name'] + ' to ' + data['color']);
       for(const user of $('.user')){
         if($(user).text() === data['name']){
