@@ -1,6 +1,6 @@
 /*
 Author: Jesse Shewfelt
-UUID:   30066463
+UCID:   30066463
 LAB:    3
 
 Updated:  07/03/20
@@ -50,7 +50,7 @@ io.on('connection', function(socket){
   //shares sent messages across connected clients
   socket.on('message', function(msg){
     console.log('Message: ' + msg['text']);
-    msg['time'] = moment().format("DD/MM/YYYY h:m A");
+    msg['time'] = moment().format("DD/MM/YYYY h:mm A");
     messages.push(msg);
     io.emit('message', msg);
   });
