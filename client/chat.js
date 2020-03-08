@@ -18,14 +18,14 @@ $(document).ready(function(){
 
       //change color
       else if(text.startsWith("/nickcolor"))
-        is_valid_color(text.slice(11)) ? color = text.slice(11) : err('color');
+        socket.emit('nickcolor', {name: username, color: text.slice(11)});
 
       //change name
       else if(text.startsWith("/nick"))
-        socket.emit('nickname', {old: username, new: text.slice(6)})
+        socket.emit('nickname', {old: username, new: text.slice(6)});
 
       //invalid command
-      else if(TextTrack.startsWith("/"))
+      else if(text.startsWith("/"))
           err('command');
       
       //send message
@@ -45,15 +45,19 @@ $(document).ready(function(){
       add_message(msg);
     });
 
-
     
     //when a client joins update their log of users and messages and
     //give them a username
     socket.on('welcome', function(data){
+      //set user info
       username = data['name'];
-      console.log('welcome ' + username);
-      document.cookie = 'username=' + username + '; max-age=' + 60*60*24 + ';';
+      color = data['color'];
       $('#m').attr('placeholder', 'Enter your message ' + username);
+      
+      //update cookie with user info
+      document.cookie = 'username=' + username + '; max-age=' + 60*60*24 + ';';
+      
+      //load in users and message backlog
       for(const user of data['users'])
         add_user(user);
       for(const message of data['messages'])
@@ -61,16 +65,14 @@ $(document).ready(function(){
     });
 
 
-
-    //add users when they join
+    //add users to the lsit when they join
     socket.on('user-join', function(user){
       console.log('user "' + user + '" joined');
       add_user(user);
     });
 
 
-
-    //remove users when they leave
+    //remove users from the list when they leave
     socket.on('user-left', function(name){
       console.log('user "' + name + '" left');
       for(const user of $('.user')){
@@ -87,6 +89,7 @@ $(document).ready(function(){
       //if my name was changed
       if(names['old'] === username){
         username = names['new'];
+        $('#m').attr('placeholder', 'Enter your message ' + username);
         document.cookie = 'username=' + username + '; max-age=' + 60*60*24 + ';';
       }
         
@@ -98,18 +101,37 @@ $(document).ready(function(){
       }      
     });
 
+
+    //edit the online users list when a color is changed
+    socket.on('color-change', function(data){
+      if(data['name'] === username)
+        color = data['color'];
+
+      console.log('Setting color of "' + data['name'] + ' to ' + data['color']);
+      for(const user of $('.user')){
+        if($(user).text() === data['name']){
+          $(user).css('color', ('#' + data['color']));
+          break;
+        }
+      }            
+    });
+
     
     //alert user when name is taken
-    socket.on('name-taken', function(names){
+    socket.on('name-taken', function(){
       err('name');
     });
 
+    //alert user when invalid color is input
+    socket.on('bad-color', function(){
+      err('color');
+    });
 
     function add_user(name){
-      let li = $('<li class="list-group-item text-center"></li>');
+      let li = $('<li class="list-group-item user-item text-center"></li>');
       let usr = $('<label class="user">' + name + '</label>');
       if(name === username)
-        usr.css('font-weight', 'bold');
+        usr.css({'font-weight':'bold', 'font-style':'italic'});
       li.append(usr);
       $('#users').append(li);       
     };
@@ -118,7 +140,7 @@ $(document).ready(function(){
       let li = $('<li class="list-group-item"></li>');
       let usr = $('<label class="username" style="color: #' + message['color'] + ';">' + message['user'] + '</label>');
       if(message['user'] === username)
-        usr.css('font-weight', 'bold');
+        usr.css({'font-weight':'bold', 'font-style':'italic'});
       let tim = $('<label class="timestamp">' + message['time'] + '</label>');
       let txt = $('<p class="message">' + message['text'] + '</p>');
       
@@ -130,30 +152,21 @@ $(document).ready(function(){
       $('#messages').scrollTop($('#messages').prop("scrollHeight"));
     };
 
-
-    //checks if text is a valid hex color
-    function is_valid_color(text){
-      //https://stackoverflow.com/questions/8027423/how-to-check-if-a-string-is-a-valid-hex-color-representation/8027444
-      console.log('Testing color ' + text);
-      return(/^[0-9A-F]{6}$/i.test(text));
-    };
-
-
     //displays error messages to the user
-    function err(type){
+    function err(type, data){
       let err_message = {
         user: 'Alert',
         color: 'ee5502',
         time: 'Only you can view this message',
       }
       if(type === 'color')
-        err_message['text'] = "Invalid color selection. Format should be /nickcolor RRGGBB."
+        err_message['text'] = 'Color format should be /nickcolor RRGGBB.'
       else if(type === 'name')
-        err_message['text'] = "Invalid name choice. That name is already taken."
+        err_message['text'] = 'The name "' + data + '" is already taken.'
       else if(type === 'command')
-        err_message['text'] = "Invalid command. Valid commands are /nick and /nickcolor"
+        err_message['text'] = 'Invalid command. Valid commands are /nick and /nickcolor'
       else
-        err_message['text'] = "An unknown error occured."
+        err_message['text'] = 'An unknown error occured.'
       add_message(err_message);
     };
     

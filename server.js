@@ -4,7 +4,6 @@
 
 let express = require('express');
 let app = express();
-let cookieParser = require('cookie-parser'); 
 let http = require('http').createServer(app);
 let io = require('socket.io')(http);
 let moment = require('moment');
@@ -17,21 +16,8 @@ http.listen(3000, function(){
 });
 
 //serve client files on connection
-app.use(cookieParser());
 app.use(express.static(__dirname + '/client'));
 app.get('/', function(req, res){
-  // console.log('Request recieved');
-
-  // let cookies = req.cookies;
-  // if(!cookies['username']){
-  //   let user = new_username();
-  //   console.log('No username found. Assigning name "' + user + '"');
-  //   res.cookie('username', user, {'maxAge' : 1000 * 60 * 1});//valid for 1 minute
-  // }
-  // else{
-  //   console.log('Username found. Assigning name "' + cookies['username'] + '"');
-  // }
-  
   res.sendFile(__dirname + '/client/chat.html');
 });
 
@@ -50,9 +36,11 @@ io.on('connection', function(socket){
 
   let data = {
     name: user,
+    color: '000000',
     users: users,
     messages: messages,
   }
+
   io.to(socket.id).emit('welcome', data);
   socket.broadcast.emit('user-join', user);
 
@@ -73,12 +61,21 @@ io.on('connection', function(socket){
   socket.on('nickname', function(names){
     console.log(names['old'] + ' wants to be ' + names['new']);
     if(users.includes(names['new']))
-      io.to(socket.id).emit('name-taken', names);
+      io.to(socket.id).emit('name-taken');
     else{
+      socket.user = names['new'];
       users = users.filter(u => u !== names['old']);
-      users.push(names['new'])
+      users.push(names['new']);
       io.emit('name-change', names);
     }
+  });
+
+  socket.on('nickcolor', function(user){
+    if(!is_valid_color(user['color']))
+      io.to(socket.id).emit('bad-color');
+    else
+      io.emit('color-change', user);
+    
   });
 
 
@@ -103,5 +100,12 @@ io.on('connection', function(socket){
     console.log("Generated name: " + name);
     return name;
   }
+
+    //checks if text is a valid hex color
+    function is_valid_color(text){
+      //https://stackoverflow.com/questions/8027423/how-to-check-if-a-string-is-a-valid-hex-color-representation/8027444
+      console.log('Testing color ' + text);
+      return(/^[0-9A-F]{6}$/i.test(text));
+    };
 
 });

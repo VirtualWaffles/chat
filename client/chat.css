@@ -1,15 +1,45 @@
 /* colors */
-.bg-p {
-    background-color: gray;
-    color: black;
+:root{
+    --black: #050507;
+    --darker: #12141b;
+    --dark: #1f2230;
+
+    --base: #30354a;
+    --bold: #434d77;    
+
+    --bright: #686c7b;
+    --brighter: #b3b5bd;
+    --white: #F6F4F3;
 }
 
-.bg-s{
-    background-color: lightgrey;
+/* Additional sizing options */
+.h-100 {
+    max-height: 99.9vh;
 }
 
+.h-90 {
+    height: 95%;
+    min-height: 95%;
+    max-height: 95vh;
+}
+
+.h-10 {
+    height: 5%;
+    min-height: 5%;
+    max-height: 5vh;
+}
+
+/* General changes */
 body, html {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--darker);
+    scrollbar-color: var(--black) var(--base);
+
     height: 100%;
+}
+
+#main {
+    background-color: var(--dark);
 }
 
 .list-group {
@@ -17,30 +47,63 @@ body, html {
 }
 
 .list-group-item {
+    background-color: transparent;
+    color: var(--white);
+    border-radius: 10px;
+    margin-top: 2px;
+
     width: 100%;
     word-wrap: normal;
     word-break: break-all;
 }
 
-.h-100 {
-    max-height: 99.9vh;
+/* Text Area */
+#messages {
+    background-color: var(--bright);
 }
 
-.h-90 {
-    height: 90%;
-    min-height: 90%;
-    max-height: 90vh;
+#hide {
+    background-color: transparent;
 }
 
-.h-10 {
-    height: 10%;
-    min-height: 10%;
-    max-height: 10%;
+#m {
+    background-color: var(--bright);
+    color: var(--white);
+    border-width: 2px 0 0 0;
+    border-radius: 0 0 10px 10px;
+    border-style: solid;
+    border-color: var(--base);
+
+    text-indent: 10px;
+
 }
 
-/* users formatting */
+.username {
+    color: var(--white-color);
+    font-size: larger;
+    font-weight: normal;
+}
+
+.timestamp {
+    color: var(--brighter);
+    font-size: small;
+    margin-left: 1em;
+}
+
+.message {
+    margin: -3px 0;
+}
+
+
+/* Online users area */
+#users {
+    background-color: var(--dark);
+}
+
+
 #users-label{
-    font-weight: bold;
+    background-color: transparent;
+    margin-bottom: -15px;
 }
 
 .user {
@@ -48,21 +111,7 @@ body, html {
     margin: 0;
 }
 
-#users > .list-group-item {
+.user-item {
+    background-color: var(--darker);
     margin-bottom: 3px;
-}
-
-/* message formatting */
-.username {
-    font-size: larger;
-    font-weight: normal;
-}
-
-.timestamp {
-    font-size: small;
-    margin-left: 1em;
-}
-
-.message {
-    margin: -3px 0;
 }

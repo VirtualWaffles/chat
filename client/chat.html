@@ -5,32 +5,36 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600,600i&display=swap" rel="stylesheet"> 
     <link rel="stylesheet" href="chat.css">
   </head>
 
-  <body class="container border rounded h-100">
-    <div class="row h-100">
+  <body class="container h-100">
+    <div id="main" class="row h-100 pl-3">
       
-      <div class="col-9 border-right">
-        <div class="row h-90 pl-3">
+      <!-- Chat log -->
+      <div class="col-9">
+        <div class="row h-90">
           <ul class="list-group list-group-flush mh-100 w-100" id="messages">
-            <!--This was a dumb idea but it works. Please dont touch-->
+            <!--A janky way to scroll bottom up-->
             <li id="hide" class="list-group-item h-100"></li>
           </ul>
         </div>
 
-        <div class="row h-10 pl-3">
+        <!-- Message box -->
+        <div class="row h-10">
           <form action="" style="width: 100%;">
-            <input class="h-50 pl-2" id="m" autocomplete="off" placeholder="Type your message" style="width: 100%;">
+            <input class="h-100 pl-2" id="m" autocomplete="off" autofocus style="width: 100%;">
           </form>
         </div>
       </div>
 
-      <div class="col-3 bg-s">
+      <!-- User list -->
+      <div class="col-3">
         <div class="row h-100">
           <ul id="users" class="list-group mh-100 w-100">
-            <li class="list-group-item text-center">
-              <label id="users-label">Online Users</label>
+            <li id="users-label" class="list-group-item text-center">
+              <label>Online Users</label>
             </li>        
         </div>
       </div>
